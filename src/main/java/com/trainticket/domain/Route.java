@@ -20,6 +20,9 @@ public class Route {
     }
     public Route(){}
 
+    public Route(String name){
+        this.name=name;
+    }
     public long getId() {
         return id;
     }

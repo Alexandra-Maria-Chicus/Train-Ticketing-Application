@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface RouteStopRepository extends JpaRepository<RouteStop,Long> {
     public List<RouteStop> findByRoute(Route route);
+    public void deleteRouteStopsByRoute(Route route);
 }

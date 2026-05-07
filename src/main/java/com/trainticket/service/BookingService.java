@@ -56,12 +56,6 @@ public class BookingService {
         emailService.sendBookingConfirmation(user.getEmail(), user.getName(),fromStation.getName(),toStation.getName(),schedule.getDepartureTime(),seatCount);
     }
 
-    public List<Booking> getBookingsForSchedule(long scheduleId){
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
-        return bookingRepository.findBySchedule(schedule);
-    }
-
     public List<List<Schedule>> findTravelOptions(Station fromStation, Station toStation){
         List<Schedule> schedules=scheduleRepository.findAll();
         List<List<Schedule>> output=new ArrayList<>();
