@@ -6,6 +6,7 @@ import com.trainticket.exception.ValidationException;
 import com.trainticket.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,17 +15,15 @@ public class AdminService {
     private RouteStopRepository routeStopRepository;
     private TrainRepository trainRepository;
     private BookingRepository bookingRepository;
-    private BookingService bookingService;
     private StationRepository stationRepository;
     private ScheduleRepository scheduleRepository;
     private EmailService emailService;
 
-    public AdminService(RouteRepository routeRepository, RouteStopRepository routeStopRepository, TrainRepository trainRepository, BookingRepository bookingRepository, BookingService bookingService, StationRepository stationRepository, ScheduleRepository scheduleRepository, EmailService emailService) {
+    public AdminService(RouteRepository routeRepository, RouteStopRepository routeStopRepository, TrainRepository trainRepository, BookingRepository bookingRepository, StationRepository stationRepository, ScheduleRepository scheduleRepository, EmailService emailService) {
         this.routeRepository = routeRepository;
         this.routeStopRepository = routeStopRepository;
         this.trainRepository = trainRepository;
         this.bookingRepository = bookingRepository;
-        this.bookingService = bookingService;
         this.stationRepository = stationRepository;
         this.scheduleRepository = scheduleRepository;
         this.emailService = emailService;
@@ -102,6 +101,49 @@ public class AdminService {
         routeStopRepository.deleteRouteStopsByRoute(route);
         routeRepository.delete(route);
     }
+
+    public void addSchedule(long trainId, long routeId, LocalDateTime departure){
+        Train t=trainRepository.findById(trainId).orElseThrow(()->new ValidationException("Train not found"));
+        Route r= routeRepository.findById(routeId).orElseThrow(()-> new ValidationException("Route not found"));
+        Schedule schedule= new Schedule(t,r,departure);
+        scheduleRepository.save(schedule);
+    }
+
+    public void updateSchedule(long scheduleId, long trainId, long routeId, LocalDateTime departure){
+        Schedule s= scheduleRepository.findById(scheduleId).orElseThrow(()->new ValidationException("Schedule not found"));
+        Train t=trainRepository.findById(trainId).orElseThrow(()->new ValidationException("Train not found"));
+        Route r= routeRepository.findById(routeId).orElseThrow(()-> new ValidationException("Route not found"));
+        s.setTrain(t);
+        s.setRoute(r);
+        s.setDepartureTime(departure);
+        scheduleRepository.save(s);
+    }
+
+    public void deleteSchedule(long scheduleId){
+        Schedule s= scheduleRepository.findById(scheduleId).orElseThrow(()->new ValidationException("Schedule not found"));
+        scheduleRepository.delete(s);
+    }
+
+    public void addStation(String name){
+        if(name.isEmpty())
+            throw  new ValidationException("Name cannot be empty");
+        Station station= new Station(name);
+        stationRepository.save(station);
+    }
+
+    public void updateStation(long stationId,String name){
+        if(name.isEmpty())
+            throw  new ValidationException("Name cannot be empty");
+        Station station= stationRepository.findById(stationId).orElseThrow(()->new ValidationException("Station not found"));
+        station.setName(name);
+        stationRepository.save(station);
+    }
+
+    public void deleteStation(long stationId){
+        Station station= stationRepository.findById(stationId).orElseThrow(()->new ValidationException("Station not found"));
+        stationRepository.delete(station);
+    }
+
     public void setDelay(long scheduleId, int delayMinutes) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ValidationException("Schedule not found"));
