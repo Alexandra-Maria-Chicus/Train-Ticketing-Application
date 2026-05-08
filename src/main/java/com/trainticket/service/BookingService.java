@@ -3,9 +3,8 @@ package com.trainticket.service;
 import com.trainticket.domain.*;
 import com.trainticket.exception.NoRouteFoundException;
 import com.trainticket.exception.OverbookingException;
-import com.trainticket.repository.BookingRepository;
-import com.trainticket.repository.RouteStopRepository;
-import com.trainticket.repository.ScheduleRepository;
+import com.trainticket.exception.ValidationException;
+import com.trainticket.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,19 +13,27 @@ import java.util.List;
 
 @Service
 public class BookingService {
+    private final StationRepository stationRepository;
+    private final UserRepository userRepository;
     private BookingRepository bookingRepository;
     private ScheduleRepository scheduleRepository;
     private EmailService emailService;
     private RouteStopRepository routeStopRepository;
 
-    public BookingService(BookingRepository bookingRepository, ScheduleRepository scheduleRepository, EmailService emailService, RouteStopRepository routeStopRepository) {
+    public BookingService(BookingRepository bookingRepository, ScheduleRepository scheduleRepository, EmailService emailService, RouteStopRepository routeStopRepository, StationRepository stationRepository, UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.scheduleRepository = scheduleRepository;
         this.emailService = emailService;
         this.routeStopRepository = routeStopRepository;
+        this.stationRepository = stationRepository;
+        this.userRepository = userRepository;
     }
 
-    public void bookTicket(User user, Station fromStation, Station toStation, Schedule schedule, int seatCount){
+    public void bookTicket(long userId, long fromStationId, long toStationId, long scheduleId,int seatCount){
+        Schedule schedule=scheduleRepository.findById(scheduleId).orElseThrow(()->new ValidationException("Schedule does not exist"));
+        Station fromStation=stationRepository.findById(fromStationId).orElseThrow(()->new ValidationException("From Station does not exist"));
+        Station toStation=stationRepository.findById(toStationId).orElseThrow(()->new ValidationException("To Station does not exist"));
+        User user = userRepository.findById(userId).orElseThrow(()->new ValidationException("User does not exist"));
         List<RouteStop> stops = routeStopRepository.findByRoute(schedule.getRoute());
 
         RouteStop from = stops.stream()
@@ -56,7 +63,9 @@ public class BookingService {
         emailService.sendBookingConfirmation(user.getEmail(), user.getName(),fromStation.getName(),toStation.getName(),schedule.getDepartureTime(),seatCount);
     }
 
-    public List<List<Schedule>> findTravelOptions(Station fromStation, Station toStation){
+    public List<List<Schedule>> findTravelOptions(long fromStationId, long toStationId){
+        Station fromStation=stationRepository.findById(fromStationId).orElseThrow(()->new ValidationException("From Station does not exist"));
+        Station toStation=stationRepository.findById(toStationId).orElseThrow(()->new ValidationException("To Station does not exist"));
         List<Schedule> schedules=scheduleRepository.findAll();
         List<List<Schedule>> output=new ArrayList<>();
         for(Schedule sch: schedules){
