@@ -1,10 +1,15 @@
 package com.trainticket.domain;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 
 @Table(name = "users")
 @Entity
-public class User {
+public class User implements  UserDetails{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
@@ -37,8 +42,18 @@ public class User {
         return email;
     }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     public void setId(long id) {

@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking,Long> {
     public List<Booking> findBySchedule(Schedule schedule);
-    public List<Booking> findByTrain(Train train);
+    public List<Booking> findBySchedule_Train(Train train);
 }

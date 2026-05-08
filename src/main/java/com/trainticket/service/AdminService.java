@@ -56,7 +56,7 @@ public class AdminService {
     public List<Booking> getBookingsForTrain(long trainId){
         Train train= trainRepository.findById(trainId)
                 .orElseThrow(() -> new RuntimeException("Train not found"));
-        return bookingRepository.findByTrain(train);
+        return bookingRepository.findBySchedule_Train(train);
     }
     public void addRoute(String name, List<RouteStopRequest> stops) {
         if (name.isEmpty())
