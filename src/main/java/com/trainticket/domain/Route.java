@@ -11,7 +11,7 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @OneToMany(mappedBy = "route")
+    @OneToMany(mappedBy = "route", fetch = FetchType.EAGER)
     private List<RouteStop> stops = new ArrayList<>();
 
     public Route( String name, List<RouteStop> stops) {

@@ -27,4 +27,9 @@ public class BookingController {
     public List<List<Schedule>> findTravelOptions(@RequestParam long fromStationId, @RequestParam long toStationId){
         return bookingService.findTravelOptions(fromStationId,toStationId);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "app is working";
+    }
 }
