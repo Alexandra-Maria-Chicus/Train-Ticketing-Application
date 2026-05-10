@@ -60,9 +60,13 @@ public class BookingService {
         }
         Booking b = new Booking(user, fromStation, toStation, schedule, seatCount, LocalDateTime.now());
         bookingRepository.save(b);
-        emailService.sendBookingConfirmation(user.getEmail(), user.getName(), fromStation.getName(), toStation.getName(), schedule.getDepartureTime(), seatCount);
+        try {
+            emailService.sendBookingConfirmation(user.getEmail(), user.getName(), fromStation.getName(), toStation.getName(), schedule.getDepartureTime(), seatCount);
+        }
+        catch (Exception e){
+            System.out.println("Email failed: " + e.getMessage());
+        }
     }
-
     public List<List<Schedule>> findTravelOptions(long fromStationId, long toStationId) {
         Station fromStation = stationRepository.findById(fromStationId)
                 .orElseThrow(() -> new ValidationException("From Station does not exist"));

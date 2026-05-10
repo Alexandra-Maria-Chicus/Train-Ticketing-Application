@@ -13,6 +13,7 @@ public class ScheduleRequest {
         this.departureTime = departureTime;
     }
 
+    public ScheduleRequest(){}
     public long getTrainId() {
         return trainId;
     }

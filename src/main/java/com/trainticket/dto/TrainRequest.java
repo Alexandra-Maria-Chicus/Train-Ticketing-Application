@@ -9,6 +9,7 @@ public class TrainRequest {
         this.capacity = capacity;
     }
 
+    public TrainRequest(){}
     public String getName() {
         return name;
     }

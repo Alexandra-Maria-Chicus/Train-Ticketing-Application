@@ -152,11 +152,16 @@ public class AdminService {
 
         List<Booking> bookings = bookingRepository.findBySchedule(schedule);
         for (Booking b : bookings) {
-            emailService.sendDelayNotification(
+            try{
+                emailService.sendDelayNotification(
                     b.getUser().getEmail(),
                     b.getUser().getName(),
                     delayMinutes
-            );
+                );
+            }
+            catch (Exception e){
+                System.out.println("Email failed: " + e.getMessage());
+            }
         }
     }
 }

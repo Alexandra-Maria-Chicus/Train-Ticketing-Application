@@ -11,6 +11,7 @@ public class RouteStopRequest {
         this.departureOffset = departureOffset;
     }
 
+    public RouteStopRequest(){}
     public long getStationId() {
         return stationId;
     }

@@ -15,6 +15,8 @@ public class BookingRequest {
         this.seatCount = seatCount;
     }
 
+    public BookingRequest(){}
+
     public long getUserId() {
         return userId;
     }

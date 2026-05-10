@@ -11,6 +11,7 @@ public class RouteRequest {
         this.stops = stops;
     }
 
+    public RouteRequest(){}
     public String getName() {
         return name;
     }
